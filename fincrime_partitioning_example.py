@@ -135,13 +135,15 @@ np.random.seed(8)
 partition_to_banks = defaultdict(set)
 partition_to_banks["bank01"] = {"BANKUSUS"}
 partition_to_banks["bank02"] = {"BANKDEDE"}
+partitioned_banks = {"BANKUSUS", "BANKDEDE"}
 
 # randomly assign sending banks to remaining partitions
 N_PARTITIONS = 2
-banks = bank_df[~bank_df.Bank.isin(partition_to_banks)].Bank.unique()
+# banks = bank_df[~bank_df.Bank.isin(partition_to_banks)].Bank.unique()
+banks = bank_df[~bank_df.Bank.isin(partitioned_banks)].Bank.unique()
 
 # partition names are 1 indexed. Leave first two partitions for receiving banks.
-partition_ids = [(i % N_PARTITIONS) + 3 for i in range(len(banks))]
+partition_ids = [(i % N_PARTITIONS) + 0 for i in range(len(banks))]
 np.random.shuffle(partition_ids)
 bank_to_partition = dict(zip(banks, partition_ids))
 
@@ -161,7 +163,7 @@ for partition_name, bank_set in partition_to_banks.items():
         out_file = out_dir / partition_name / "bank_dataset.csv"
         out_file.parent.mkdir(exist_ok=True, parents=True)
         print(f"Writing {out_file.relative_to(out_file.parents[3])}...")
-        subset.to_csv(out_file)
+        subset.to_csv(out_file,index=False)
 
 
 """### Inspect partitioned files"""
